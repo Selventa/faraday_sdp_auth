@@ -39,9 +39,19 @@ module FaradaySdpAuth
     private
 
     def to_query(params)
-      params.map { |k, v|
-        [CGI.escape(k.to_s), '=', CGI.escape(v.to_s)]
-      }.map(&:join).join('&')
+      query=''
+      params.each { |name, values|
+        name   = CGI.escape(name.to_s)
+        values = [values].flatten
+        if values.size > 1
+          values.each { |v|
+            query << "#{name}=#{CGI.escape(v.to_s)}&"
+          }
+        else
+          query << "#{name}=#{CGI.escape(values.first.to_s)}&"
+        end
+      }
+      query.chomp('&')
     end
   end
 end
